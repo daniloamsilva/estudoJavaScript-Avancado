@@ -73,26 +73,13 @@ const Data = (function($){
 	searchInput.addEventListener('keyup', search);
 
 	// Função de busca
-	function search(event){
+	async function search(event){
 		// Se o tecla digitada for enter, o busca é iniciada
 		if (event && event.keyCode === 13) {
-			$.setList([
-				{
-					full_name: 'JavaScript',
-					created_at: '2020-07-25T20:10:50Z',
-					forks: 300300
-				},
-				{
-					full_name: 'JavaScript 2',
-					created_at: '2020-07-25T20:10:50Z',
-					forks: 18300
-				},
-				{
-					full_name: 'JavaScript 3',
-					created_at: '2020-07-25T20:10:50Z',
-					forks: 730
-				}
-			])
+			const searchQuery = searchInput.value;
+			let response = await fetch(`https://api.github.com/search/repositories?q=${searchQuery}`);
+			response = await response.json();
+			$.setList(response.items);
 		}
 	}
 
