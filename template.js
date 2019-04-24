@@ -4,8 +4,8 @@ const languageSelect = document.querySelector('#language-tags')
 const templateWorker = new Worker('./template_worker.js')
 
 const config = new Proxy ({
-	listItem: [],
-	languageTag: 'en-US'
+	listItem: JSON.parse(sessionStorage.getItem('listItems')) || [],
+	languageTag: localStorage.getItem('lang') || 'en-US'
 },{
 	set: function(target, prop, value, receiver){
 		if (prop === 'listItem' || prop === 'languageTag') {
@@ -19,14 +19,18 @@ const config = new Proxy ({
 
 // Listener para mudança de linguagem
 languageSelect.addEventListener('change', changeLanguage);
+languageSelect.value = config.languageTag;
 
 // Função que é executada quando a linguagme é mudada
 function changeLanguage(){
-	config.languageTag = languageSelect.value;
+	const lang = languageSelect.value;
+	localStorage.setItem('lang', lang);
+	config.languageTag = lang;
 }
 
 // Função atualizar a lista da busca
 export function setList(list){
+	sessionStorage.setItem('listItems', JSON.stringify(list));
 	config.listItem = list;
 }
 
@@ -40,3 +44,7 @@ function render(){
 	}
 	
 }
+
+(function start(){
+	render();
+})()
